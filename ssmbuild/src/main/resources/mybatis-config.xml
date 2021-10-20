@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--手动添加日志,使得每执行一个SQL，可以在输出日志看到sql对应的数据库操作-->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+    </settings>
+
+    <!--配置数据源，整合spring之后，交给spring去做-->
+    <typeAliases>
+        <package name="com.kang.pojo"/><!--这个包下的文件让它自己取别名-->
+    </typeAliases>
+
+
+    <mappers>
+        <mapper class="com.kang.dao.BookMapper"/><!--接口类 和映射文件(xml)放在同一个目录下，并且文件名一样，则用class方式，否则用resource、-->
+    </mappers>
+</configuration>
+<!--mybatis核心配置文件-->

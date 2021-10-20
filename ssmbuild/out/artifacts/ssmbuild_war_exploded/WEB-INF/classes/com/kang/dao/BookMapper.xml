@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kang.dao.BookMapper">
+    <!--parameterType参数--><!--如果没有数据库选择提示信息，setting->Language and Framework->SQL Dialects中配置好数据库类型apply一下即可，-->
+    <insert id="addBook" parameterType="Books">
+    insert into ssm_test_01.books( bookName, bookCounts, detail)
+    values (#{bookName},#{bookCounts},#{ detail});
+    </insert>
+
+<!--    parameterType 参数类型写_int  相当于  int类型
+    int   相当于   integer类型
+    由于idea会自动识别，所以直接写int就好了-->
+    <delete id="deleteBookById" parameterType="int">
+        delete from ssm_test_01.books
+        where bookID = #{bookId}
+    </delete>
+
+    <update id="updateBook" parameterType="Books">
+        update ssm_test_01.books
+        set  bookName= #{bookName} ,bookCounts =#{bookCounts},detail=#{detail}
+        where bookID=#{bookID};
+    </update>
+
+    <!--<select id="queryAllbookById" resultType="Books">
+        select * from ssm_test_01.books
+        where bookID = #{bookId}
+    </select>-->
+
+    <select id="queryAllbook" resultType="Books">
+        select * from ssm_test_01.books
+    </select>
+
+    <select id="queryBookByName" resultType="Books">
+        select * from ssm_test_01.books where bookName= #{bookName}
+    </select>
+   <!-- 这里的 bookName= #{bookName}的bookName是Mapper接口上的参数-->
+    <!--写完mapper.xml请第一时间去myBatis.xml中绑定mapper-->
+    <!--
+    parameterType:参数类型，如果参数类型是String，可以不写
+    resultType:返回类型
+    -->
+</mapper>

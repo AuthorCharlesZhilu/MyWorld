@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        https://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd"><!--springmvc配置文件-->
+<!--
+    <import resource="classpath:spring-dao.xml"/>   这句的作用是把dao层和service层关联到一个上下文中，但是这个操作idea帮我做了，就不需要写
+    -->
+    <!--扫描Service下的包,如果这个包下的文件有注解就可以自动扫描过来-->
+    <context:component-scan base-package="com.kang.service"/>
+
+    <!--将我们的所有业务类，注入到Spring，可以通过配置或注解实现,下面这段配置相当于我们的Service层的实现类加上了@Service和@Autowire-->
+    <bean id="BookServiceImpl" class="com.kang.service.BookServiceImpl">
+        <property name="bookMapper" ref="bookMapper"/>
+    </bean>
+
+    <!--声明式 事务配置，导入这个配置后就有事务功能，但没说横切到哪里，按默认属性创建事务-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--注入数据源-->
+        <property name="dataSource" ref="dataSource"/><!--如果要横切事务的话，还要写AOP的一些植入(需要导包)-->
+    </bean>
+
+    <!--AOP事务支持-->
+    <!--结合AOP实现事务的织入-->
+    <!--配置业务通知: -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!--给那些方法配置事务-->
+        <!--配置事务的传播特性:new propagation-->
+        <tx:attributes>
+<!--            <tx:method name="add" propagation="REQUIRED"/>
+            <tx:method name="delete" propagation="REQUIRED"/>
+            <tx:method name="update" propagation="REQUIRED"/>
+            <tx:method name="query" read-only="true"/>-->
+            <tx:method name="*" propagation="REQUIRED"/><!--propagation="REQUIRED"  没有事务给它添加一个事务-->
+        </tx:attributes>
+    </tx:advice>
+    <!--配置事务切入-->
+    <aop:config>
+        <aop:pointcut id="txPointCut" expression="execution(* com.kang.dao.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointCut"/>
+    </aop:config>
+    <!--横切事务需要到如aop支持包，这里容易忘记重新发布包-->
+
+
+</beans>
